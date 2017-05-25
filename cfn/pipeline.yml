@@ -157,22 +157,14 @@ Resources:
                             InputArtifacts:
                                 - Name: Built
                             ActionTypeId:
-                                Category: Deploy
+                                Category: Build
                                 Owner: AWS
                                 Version: 1
                                 Provider: CodeBuild
                             OutputArtifacts:
-                                - Name: DeployOutput
+                                - Name: Deployed
                             Configuration:
                                 ProjectName: !Ref CodeFrontendDeploySite
-                                ParameterOverrides: !Sub |
-                                    {
-                                        "ApplicationName": "${ApplicationName}",
-                                        "EnvironmentName": "staging"
-                                    }
-                            ArtifactStore:
-                                Type: S3
-                                Location: !Ref ArtifactS3Bucket
 
     CodeFrontendBuild:
         Type: AWS::CodeBuild::Project
