@@ -101,7 +101,7 @@ Resources:
                                 Category: Build
                                 Owner: AWS
                                 Version: 1
-                                Provider: CodeFrontendBuild
+                                Provider: CodeBuild
                             OutputArtifacts:
                                 - Name: Built
                             Configuration:
