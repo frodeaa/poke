@@ -21,4 +21,4 @@ artifacts:
   files:
     - cfn/*
     - config/*
-    - frontend/build/*
+    - frontend/build/**

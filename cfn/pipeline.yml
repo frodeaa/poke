@@ -29,6 +29,26 @@ Parameters:
         Type: String
         Default: master
 
+    BuildComputeType:
+        Description: The build compute type to use for building the app
+        Type: String
+        Default: "BUILD_GENERAL1_SMALL"
+
+    BuildType:
+        Description: The build container type to use for building the app
+        Type: String
+        Default: "linuxContainer"
+
+    FrontentBuildImage:
+        Description: The build image to use for building the app
+        Type: String
+        Default: "aws/codebuild/ubuntu-base:14.04"
+
+    FrontentDeployImage:
+        Description: The build image to use for building the app
+        Type: String
+        Default: "aws/codebuild/ubuntu-base:14.04"
+
 Metadata:
 
     AWS::CloudFormation::Interface:
@@ -131,6 +151,28 @@ Resources:
                                         "ApplicationName": "${ApplicationName}",
                                         "EnvironmentName": "staging"
                                     }
+                        -
+                            Name: DeployFrontend
+                            RunOrder: 2
+                            InputArtifacts:
+                                - Name: Built
+                            ActionTypeId:
+                                Category: Deploy
+                                Owner: AWS
+                                Version: 1
+                                Provider: CodeBuild
+                            OutputArtifacts:
+                                - Name: DeployOutput
+                            Configuration:
+                                ProjectName: !Ref CodeFrontendDeploySite
+                                ParameterOverrides: !Sub |
+                                    {
+                                        "ApplicationName": "${ApplicationName}",
+                                        "EnvironmentName": "staging"
+                                    }
+                            ArtifactStore:
+                                Type: S3
+                                Location: !Ref ArtifactS3Bucket
 
     CodeFrontendBuild:
         Type: AWS::CodeBuild::Project
@@ -141,9 +183,8 @@ Resources:
             Source:
                 Type: CODEPIPELINE
             Environment:
-                ComputeType: BUILD_GENERAL1_SMALL
-                Image: aws/codebuild/nodejs:7.0.0
-                Type: LINUX_CONTAINER
+                Type: !Ref BuildType
+                Image: !Sub ${FrontentBuildImage}
                 EnvironmentVariables:
                     -
                         Name: ARTIFACT_S3_BUCKET
@@ -151,6 +192,34 @@ Resources:
             Artifacts:
                 Name: !Ref ApplicationName
                 Type: CODEPIPELINE
+
+    CodeFrontendDeploySite:
+        Type: AWS::CodeBuild::Project
+        DependsOn: CodeBuildRole
+        Properties:
+            Name: !Sub ${AWS::StackName}-DeploySite
+            Description: Deploy site to S3
+            ServiceRole: !GetAtt CodeBuildRole.Arn
+            Artifacts:
+              Type: CODEPIPELINE
+            Environment:
+                Type: !Ref BuildType
+                ComputeType: !Ref BuildComputeType
+                Image: !Sub ${FrontentDeployImage}
+            Source:
+                Type: CODEPIPELINE
+                BuildSpec: !Sub |
+                    version: 0.2
+                    phases:
+                        post_build:
+                            commands:
+                                - aws s3 cp --recursive --acl public-read ./ s3://staging-${ApplicationName}/
+                    artifacts:
+                        type: zip
+                        files:
+                            - build/**
+            TimeoutInMinutes: 10
+
 
     CodePipelineRole:
         Type: AWS::IAM::Role
