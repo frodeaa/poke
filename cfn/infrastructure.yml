@@ -15,19 +15,19 @@ Parameters:
 
 Resources:
 
-    wwwBucket:
+    SiteBucket:
         Type: "AWS::S3::Bucket"
         Properties:
-            BucketName: !Sub static-${ApplicationName}-${EnvironmentName}
+            BucketName: !Sub ${EnvironmentName}-${ApplicationName}
             AccessControl: PublicRead
             WebsiteConfiguration:
                 ErrorDocument: 404.html
                 IndexDocument: index.html
 
-    wwwBucketPolicy:
+    SiteBucketPolicy:
         Type: AWS::S3::BucketPolicy
         Properties:
-            Bucket: !Ref wwwBucket
+            Bucket: !Ref SiteBucket
             PolicyDocument:
                 Version: '2012-10-17'
                 Statement:
@@ -37,4 +37,4 @@ Resources:
                       Principal: "*"
                       Action:
                         - "s3:GetObject"
-                      Resource: !Join [ "", [ "arn:aws:s3:::", !Ref wwwBucket, "/*" ] ]
+                      Resource: !Join [ "", [ "arn:aws:s3:::", !Ref SiteBucket, "/*" ] ]
