@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo install
+      - make dependencies-frontend
 
   pre_build:
     commands:
@@ -15,9 +15,10 @@ phases:
 
   post_build:
     commands:
-      - echo post_build
+      - echo Build completed on `date`
 
 artifacts:
   files:
     - cfn/*
     - config/*
+    - frontend/build/*
