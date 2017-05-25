@@ -1,0 +1,40 @@
+Description: >
+    Example Infrastructure for a Go Application.
+    This template will deploy a public available
+    S3 bucket
+
+Parameters:
+
+    # The following parameters are set dynamically by AWS CodePipeline
+
+    ApplicationName:
+        Type: String
+
+    EnvironmentName:
+        Type: String
+
+Resources:
+
+    wwwBucket:
+        Type: "AWS::S3::Bucket"
+        Properties:
+            BucketName: !Sub static-${ApplicationName}-${EnvironmentName}
+            AccessControl: PublicRead
+            WebsiteConfiguration:
+                ErrorDocument: 404.html
+                IndexDocument: index.html
+
+    wwwBucketPolicy:
+        Type: AWS::S3::BucketPolicy
+        Properties:
+            Bucket: !Ref wwwBucket
+            PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                    -
+                      Sid: "PublicReadGetObject"
+                      Effect: Allow
+                      Principal: "*"
+                      Action:
+                        - "s3:GetObject"
+                      Resource: !Join [ "", [ "arn:aws:s3:::", !Ref wwwBucket, "/*" ] ]
