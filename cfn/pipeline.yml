@@ -290,9 +290,3 @@ Outputs:
         Value: !Ref CodeDeployApplication
         Export:
             Name: !Sub CodeDeployApplication-${ApplicationName}
-
-    CodeDeployServiceRoleArn:
-        Description: The CodeDeploy service role used across all environments
-        Value: !GetAtt CodeDeployServiceRole.Arn
-        Export:
-            Name: !Sub CodeDeployServiceRoleArn-${ApplicationName}
