@@ -42,7 +42,7 @@ Parameters:
     FrontentBuildImage:
         Description: The build image to use for building the app
         Type: String
-        Default: "aws/codebuild/ubuntu-base:14.04"
+        Default: "aws/codebuild/nodejs:7.0.0"
 
     FrontentDeployImage:
         Description: The build image to use for building the app
