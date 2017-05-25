@@ -149,7 +149,8 @@ Resources:
                                 ParameterOverrides: !Sub |
                                     {
                                         "ApplicationName": "${ApplicationName}",
-                                        "EnvironmentName": "staging"
+                                        "EnvironmentName": "staging",
+                                        "GitHubUser": "${GitHubUser}"
                                     }
                         -
                             Name: DeployFrontend
@@ -193,7 +194,7 @@ Resources:
             Description: Deploy site to S3
             ServiceRole: !GetAtt CodeBuildRole.Arn
             Artifacts:
-              Type: CODEPIPELINE
+                Type: CODEPIPELINE
             Environment:
                 Type: !Ref BuildType
                 ComputeType: !Ref BuildComputeType
@@ -205,7 +206,7 @@ Resources:
                     phases:
                         post_build:
                             commands:
-                                - aws s3 cp --recursive --acl public-read ./frontend/build s3://staging-${ApplicationName}/
+                                - ls -la .
                     artifacts:
                         type: zip
                         files:
