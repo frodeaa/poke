@@ -236,7 +236,7 @@ Resources:
                             "Statement": [
                                 {
                                     "Action": [ "s3:GetBucketVersioning" ],
-                                    "Resource": [ "arn:aws:s3:::${ArtifactS3Bucket}", "arn:aws:s3:::staging-${ApplicationName}],
+                                    "Resource": [ "arn:aws:s3:::${ArtifactS3Bucket}", "arn:aws:s3:::staging-${ApplicationName}"],
                                     "Effect": "Allow"
                                 },
                                 {
