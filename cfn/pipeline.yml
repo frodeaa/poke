@@ -205,7 +205,7 @@ Resources:
                     phases:
                         post_build:
                             commands:
-                                - aws s3 cp --recursive --acl public-read ./build s3://staging-${ApplicationName}/
+                                - aws s3 sync --acl public-read ./build s3://staging-${ApplicationName}/
                     artifacts:
                         type: zip
                         files:
